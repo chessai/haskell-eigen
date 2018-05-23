@@ -6,15 +6,7 @@
 
 #include "Eigen/src/Core/util/DisableStupidWarnings.h"
 
-#include "Eigen/src/misc/Solve.h"
-#include "Eigen/src/misc/SparseSolve.h"
-
-#include "Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h"
-#include "Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h"
-#include "Eigen/src/IterativeLinearSolvers/ConjugateGradient.h"
-#include "Eigen/src/IterativeLinearSolvers/BiCGSTAB.h"
-// #include "Eigen/src/IterativeLinearSolvers/IncompleteLUT.h" is not MPL2 compliant
-
+#include <Eigen/IterativeLinearSolvers>
 #include "Eigen/src/Core/util/ReenableStupidWarnings.h"
 
 #include "Eigen/SparseLU"

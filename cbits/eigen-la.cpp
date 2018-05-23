@@ -1,14 +1,17 @@
 #include "eigen-la.h"
 #include <Eigen/Core>
 #include <Eigen/LU>
-#include <Eigen/LeastSquares>
+//#include <Eigen/LeastSquares>
+#include <Eigen/QR>
+// #include <Eigen/QR>
+#include <Eigen/SVD> // src/SVD/JacobiSVD.h>
 
 using namespace Eigen;
 
 template <class T>
 RET rank(Decomposition d, int* v, const void* p, int r, int c) {
     typedef Map< Matrix<T,Dynamic,Dynamic> > MapMatrix;
-    MapMatrix A((const T*)p,r,c);
+    MapMatrix A((T*)p,r,c);
     switch (d) {
         case ::FullPivLU:
             *v = A.fullPivLu().rank();
@@ -34,7 +37,7 @@ RET kernel(Decomposition d, void** p0, int* r0, int* c0, const void* p1, int r1,
     typedef Map< Matrix<T,Dynamic,Dynamic> > MapMatrix;
     if (d != ::FullPivLU)
         return strdup("Selected decomposition doesn't support kernel revealing.");
-    MapMatrix A((const T*)p1,r1,c1);
+    MapMatrix A((T*)p1,r1,c1);
     Matrix<T,Dynamic,Dynamic> B = A.fullPivLu().kernel();
     *r0 = B.rows();
     *c0 = B.cols();
@@ -49,7 +52,7 @@ RET image(Decomposition d, void** p0, int* r0, int* c0, const void* p1, int r1, 
     typedef Map< Matrix<T,Dynamic,Dynamic> > MapMatrix;
     if (d != ::FullPivLU)
         return strdup("Selected decomposition doesn't support image revealing.");
-    MapMatrix A((const T*)p1,r1,c1);
+    MapMatrix A((T*)p1,r1,c1);
     Matrix<T,Dynamic,Dynamic> B = A.fullPivLu().image(A);
     *r0 = B.rows();
     *c0 = B.cols();
@@ -67,8 +70,8 @@ RET solve(Decomposition d,
 {
     typedef Map< Matrix<T,Dynamic,Dynamic> > MapMatrix;
     MapMatrix x((T*)px, rx, cx);
-    MapMatrix A((const T*)pa, ra, ca);
-    MapMatrix b((const T*)pb, rb, cb);
+    MapMatrix A((T*)pa, ra, ca);
+    MapMatrix b((T*)pb, rb, cb);
     switch (d) {
         case ::PartialPivLU:
             x = A.partialPivLu().solve(b);
@@ -109,9 +112,9 @@ RET relativeError(void* e,
     const void* pb, int rb, int cb)
 {
     typedef Map< Matrix<T,Dynamic,Dynamic> > MapMatrix;
-    MapMatrix x((const T*)px, rx, cx);
-    MapMatrix A((const T*)pa, ra, ca);
-    MapMatrix b((const T*)pb, rb, cb);
+    MapMatrix x((T*)px, rx, cx);
+    MapMatrix A((T*)pa, ra, ca);
+    MapMatrix b((T*)pb, rb, cb);
     *(T*)e = (A*x - b).norm() / b.norm();
     return 0;
 }

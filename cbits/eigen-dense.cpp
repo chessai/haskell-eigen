@@ -1,6 +1,5 @@
 #include "eigen-dense.h"
 #include <Eigen/Core>
-#include <Eigen/LeastSquares>
 
 using namespace Eigen;
 
@@ -11,7 +10,7 @@ Map< Matrix<T,Dynamic,Dynamic> > matrix(void* p, int r, int c) {
 
 template <class T>
 Map< Matrix<T,Dynamic,Dynamic> > matrix(const void* p, int r, int c) {
-    return Map< Matrix<T,Dynamic,Dynamic> >((const T*)p, r, c);
+    return Map< Matrix<T,Dynamic,Dynamic> >((T*)p, r, c);
 }
 
 #define RET const char*
@@ -67,7 +66,7 @@ PROP(sum);
 PROP(prod);
 PROP(mean);
 PROP(trace);
-PROP(determinant);
+//PROP(determinant);
 
 #define UNOP(name) \
 extern "C" RET eigen_##name(int code, void* p, int r, int c, const void* p1, int r1, int c1) {\
@@ -81,7 +80,7 @@ extern "C" RET eigen_##name(int code, void* p, int r, int c, const void* p1, int
         GUARD_END\
     }
 
-UNOP(inverse);
+//UNOP(inverse);
 UNOP(adjoint);
 UNOP(conjugate);
 UNOP(diagonal);

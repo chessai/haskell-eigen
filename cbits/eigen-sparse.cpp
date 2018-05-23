@@ -1,6 +1,5 @@
 #include "eigen-sparse.h"
 #include <Eigen/LU>
-#include <Eigen/LeastSquares>
 
 template <class T>
 RET sparse_new(int rows, int cols, void** pr) {
@@ -22,7 +21,7 @@ template <class T>
 RET sparse_fromList(int rows, int cols, void* data, int size, void** pr) {
     typedef SparseMatrix<T> M;
     typedef Triplet<T> E;
-    std::auto_ptr<M> a(new M(rows, cols));
+    std::unique_ptr<M> a(new M(rows, cols));
     a->setFromTriplets((E*)data, (E*)data + size);
     *(M**)pr = a.release();
     return 0;
@@ -57,7 +56,7 @@ API(sparse_free, (int code, void* p), (p));
 template <class T>\
 RET sparse_##name(void* p, void** pr) {\
     typedef SparseMatrix<T> M;\
-    std::auto_ptr<M> a(new M(*(M*)p));\
+    std::unique_ptr<M> a(new M(*(M*)p));\
     a->name();\
     *(M**)pr = a.release();\
     return 0;\
@@ -82,7 +81,7 @@ SPARSE_UNOP(transpose);
 template <class T>
 RET sparse_pruned(void* p, void** pr) {
     typedef SparseMatrix<T> M;
-    std::auto_ptr<M> a(new M(*(M*)p));
+    std::unique_ptr<M> a(new M(*(M*)p));
     a->prune(T(1));
     *(M**)pr = a.release();
     return 0;
@@ -92,7 +91,7 @@ API(sparse_pruned, (int code, void* p, void** pr), (p, pr));
 template <class T>
 RET sparse_prunedRef(void* p, void* q, void** pr) {
     typedef SparseMatrix<T> M;
-    std::auto_ptr<M> a(new M(*(M*)p));
+    std::unique_ptr<M> a(new M(*(M*)p));
     a->prune(*(T*)q);
     *(M**)pr = a.release();
     return 0;
@@ -167,8 +166,8 @@ template <class T>
 RET sparse_fromMatrix(void* p, int rows, int cols, void** pq) {
     typedef SparseMatrix<T> M;
     typedef Map< Matrix<T,Dynamic,Dynamic> > MapMatrix;
-    MapMatrix src((const T*)p, rows, cols);
-    std::auto_ptr<M> dst(new M(rows, cols));
+    MapMatrix src((T*)p, rows, cols);
+    std::unique_ptr<M> dst(new M(rows, cols));
     for (int row = 0; row < rows; ++row) {
         for (int col = 0; col < cols; ++col) {
             T val = src.coeff(row,col);

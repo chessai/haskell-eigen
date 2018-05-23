@@ -1,4 +1,6 @@
-dist
+dist*
+result*
+*.sw*
 *.hi
 *.o
 docs
